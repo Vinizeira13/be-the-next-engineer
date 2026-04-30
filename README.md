@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Be the Next Engineer
 
-## Getting Started
+> 5-day intensive to become an inference engineer. Open source. Bilingual EN/PT-BR.
+> Companion to [_Inference Engineering_](https://www.baseten.co/library/inference-engineering/) by Philip Kiely (Baseten Books, 2026).
 
-First, run the development server:
+Real models running in your browser via WebLLM. Real GPU on your Mac via MLX-LM. AI mentor reading the book with you, citing pages, refusing to bullshit you.
+
+## Why this exists
+
+Most ways to learn inference engineering ask you to choose: read a 259-page reference book and try to remember it (boring, low retention), or pay for a generic ML course (expensive, surface-level), or grind production at a frontier lab (gatekept, takes years).
+
+This is the fourth way. **5 days. Hands on. Real computation, not animations.** When you finish, you can answer any question from the book, you have a portfolio piece, and you have the muscle memory of running real models on real hardware.
+
+The technical vocabulary stays in English on purpose — KV cache, prefill, decode, roofline, quantization, TTFT, MoE, disaggregation. These are the words you'll hear in the field. We don't translate them just because the prose around them is Portuguese.
+
+## What's inside
+
+- **Livro** — Kiely's 8 chapters distilled, EN/PT-BR side-by-side, accessible at any depth.
+- **Lab** — 5 instruments running real computation:
+  1. Latency Distribution Lab (p50/p90/p99, right-skewed reality)
+  2. Prefill vs Decode Race (compute-bound vs memory-bound, viscerally)
+  3. KV Cache Observer (memory pressure during long context)
+  4. Quantization Bench (FP16 → Q4 trade-off, real perplexity)
+  5. Roofline Plot (arithmetic intensity vs ops:byte ratio)
+- **Mentor** — Claude Sonnet with RAG over the book + curated facts.json. Cites pages. Anti-hallucination guardrails.
+
+Browser-only is enough for everything. M-series Mac unlocks real Llama 70B via the optional MLX bridge.
+
+## 5-day map
+
+| Day | Build | You |
+| --- | --- | --- |
+| D1 | Foundation, AI Mentor, RAG, Cap. 0 ready | Read Cap. 0, talk to mentor |
+| D2 | Sims 1+2 + Caps 1-2 PT-BR | Latency + prefill/decode in your bones |
+| D3 | Sims 3+4 + Caps 3-5 (densest day) | KV cache, quantization, the 5 levers |
+| D4 | Sim 5 + Mac bridge + modes Mac-real + Caps 6-7 | Touch a real GPU on your Mac |
+| D5 | Apêndices + Quick Checks + Golden test | Close the book, decide v0.2 |
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router, Turbopack)
+- [Tailwind v4](https://tailwindcss.com) + [shadcn/ui](https://ui.shadcn.com)
+- [Vercel AI SDK 6](https://sdk.vercel.ai) + [Anthropic Claude Sonnet](https://www.anthropic.com)
+- [WebLLM](https://github.com/mlc-ai/web-llm) (browser inference, WebGPU)
+- [MLX-LM](https://github.com/ml-explore/mlx-lm) (Mac-native inference, optional bridge on `localhost:7777`)
+- [Dexie](https://dexie.org) (IndexedDB persistence)
+- [D3](https://d3js.org) + [Framer Motion](https://www.framer.com/motion/) (visualizations + transitions)
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [`localhost:3000`](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For Mac-real instrument modes (Sims 2, 3, 4), install the optional bridge:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# coming on Day 4
+pnpm bne:mac-bridge
+```
 
-## Learn More
+## Status
 
-To learn more about Next.js, take a look at the following resources:
+- [x] D1 — Foundation, AI Mentor, RAG, Cap. 0
+- [ ] D2 — Sims 1+2, Caps 1-2 PT-BR
+- [ ] D3 — Sims 3+4, Caps 3-5 PT-BR
+- [ ] D4 — Sim 5 + Mac bridge, Caps 6-7 PT-BR
+- [ ] D5 — Apêndices, Quick Checks, Golden test, v0.1 launch
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Build log lives in commit messages and `/buildlog` (coming D2).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contributing
 
-## Deploy on Vercel
+Once D5 ships and v0.1 is stable, PRs welcome. For now this is being built in the open but moving fast — issues > PRs until v0.1.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT. The book itself is © Baseten Labs, Inc., 2026 — we're a companion, not a replacement. Buy the book.
+
+---
+
+## Português (BR)
+
+5 dias intensivos pra virar inference engineer. Open source. Bilíngue EN/PT-BR. Companion ao livro _Inference Engineering_ do Philip Kiely (Baseten Books, 2026).
+
+Modelos reais rodando no seu browser via WebLLM. GPU real no seu Mac via MLX-LM. AI mentor lendo o livro com você, citando páginas, recusando inventar.
+
+**Vocabulário técnico fica em inglês de propósito** — KV cache, prefill, decode, roofline, quantization, TTFT, MoE, disaggregation. São as palavras que você vai ouvir no mercado. Não traduzimos só porque a prosa ao redor está em português.
+
+Pra rodar, ver instruções acima. Conteúdo bilíngue ativa pelo toggle EN · pt no canto superior direito.
