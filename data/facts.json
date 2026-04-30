@@ -1,0 +1,339 @@
+{
+  "$schema": "./facts.schema.json",
+  "version": "0.1.0",
+  "lastUpdated": "2026-04-30",
+  "source": "Inference Engineering by Philip Kiely (Baseten Books, 2026, 259 pages, ISBN 979-8-9943597-2-3)",
+  "note": "Curated facts the AI Mentor checks before making numeric/operational claims. Anti-hallucination layer. Each fact has a verifiable source (book chapter or official doc).",
+  "facts": [
+    {
+      "id": "h100-fp16-ops-byte",
+      "type": "hardware-spec",
+      "claim": "H100 ops:byte ratio in FP16 is approximately 295",
+      "value": 295,
+      "unit": "ops/byte",
+      "source": { "book": "Cap. 3.1", "page": 73 }
+    },
+    {
+      "id": "h100-fp8-tflops-dense",
+      "type": "hardware-spec",
+      "claim": "H100 dense FP8 compute is 1979 TFLOPS",
+      "value": 1979,
+      "unit": "TFLOPS",
+      "source": { "book": "Cap. 3.2.1" }
+    },
+    {
+      "id": "h100-memory",
+      "type": "hardware-spec",
+      "claim": "H100 has 80 GB HBM3 with 3.35 TB/s memory bandwidth",
+      "memoryGB": 80,
+      "bandwidthTBs": 3.35,
+      "source": { "book": "Cap. 3.2.1" }
+    },
+    {
+      "id": "h200-memory",
+      "type": "hardware-spec",
+      "claim": "H200 has 141 GB HBM3e with 4.8 TB/s memory bandwidth (same compute as H100)",
+      "memoryGB": 141,
+      "bandwidthTBs": 4.8,
+      "source": { "book": "Cap. 3.2.1" }
+    },
+    {
+      "id": "b200-spec",
+      "type": "hardware-spec",
+      "claim": "B200 is Blackwell with 192 GB HBM3e, ~5 petaFLOPS dense FP8, up to 8 TB/s memory bandwidth",
+      "memoryGB": 192,
+      "bandwidthTBs": 8,
+      "fp8PetaFLOPS": 5,
+      "source": { "book": "Cap. 3.2.3" }
+    },
+    {
+      "id": "b300-spec",
+      "type": "hardware-spec",
+      "claim": "B300 is Blackwell with 288 GB HBM3e (more memory than B200, same compute)",
+      "memoryGB": 288,
+      "bandwidthTBs": 8,
+      "source": { "book": "Cap. 3.2.3" }
+    },
+    {
+      "id": "nvlink-blackwell",
+      "type": "hardware-spec",
+      "claim": "NVLink on Blackwell delivers 1800 GB/s GPU-to-GPU 1:1 bandwidth",
+      "value": 1800,
+      "unit": "GB/s",
+      "source": { "book": "Cap. 3.3.1" }
+    },
+    {
+      "id": "nvlink-hopper",
+      "type": "hardware-spec",
+      "claim": "NVLink on Hopper delivers 900 GB/s GPU-to-GPU 1:1 bandwidth",
+      "value": 900,
+      "unit": "GB/s",
+      "source": { "book": "Cap. 3.3.1" }
+    },
+    {
+      "id": "infiniband-max",
+      "type": "hardware-spec",
+      "claim": "InfiniBand maxes at 400 Gb/s per NIC for inter-node communication",
+      "value": 400,
+      "unit": "Gb/s per NIC",
+      "source": { "book": "Cap. 3.3.1" }
+    },
+    {
+      "id": "ethernet-max",
+      "type": "hardware-spec",
+      "claim": "Ethernet maxes at 100 Gb/s per NIC, much slower than NVLink and InfiniBand",
+      "value": 100,
+      "unit": "Gb/s per NIC",
+      "source": { "book": "Cap. 3.3.1" }
+    },
+    {
+      "id": "mig-h100-slices",
+      "type": "hardware-spec",
+      "claim": "H100 supports MIG with up to 8 memory slices and 7 compute slices (132 SMs total)",
+      "memorySlices": 8,
+      "computeSlices": 7,
+      "source": { "book": "Cap. 3.3.2" }
+    },
+    {
+      "id": "deepseek-v3-params",
+      "type": "model-spec",
+      "claim": "DeepSeek V3.1 has 671B total parameters with 37B active per token (MoE)",
+      "totalParamsB": 671,
+      "activeParamsB": 37,
+      "source": { "book": "Cap. 5.4" }
+    },
+    {
+      "id": "qwen3-235b-a22b",
+      "type": "model-spec",
+      "claim": "Qwen3-235B-A22B is MoE with 235B total params, 22B active, 128 experts, router picks 8 per token in 94 layers",
+      "totalParamsB": 235,
+      "activeParamsB": 22,
+      "experts": 128,
+      "topK": 8,
+      "layers": 94,
+      "source": { "book": "Cap. 2.2.4" }
+    },
+    {
+      "id": "whisper-3-large-params",
+      "type": "model-spec",
+      "claim": "Whisper 3 Large has 1.55B parameters",
+      "paramsB": 1.55,
+      "source": { "book": "Cap. 6.3" }
+    },
+    {
+      "id": "orpheus-tts-base",
+      "type": "model-spec",
+      "claim": "Orpheus TTS is derived from Llama 3.2 3B",
+      "baseModel": "Llama 3.2 3B",
+      "source": { "book": "Cap. 6.4" }
+    },
+    {
+      "id": "vllm-flag-tensor-parallel-size",
+      "type": "engine-flag",
+      "engine": "vllm",
+      "flag": "--tensor-parallel-size",
+      "validValues": "integer >= 1, must divide model heads evenly",
+      "source": { "doc": "vllm.ai docs" }
+    },
+    {
+      "id": "vllm-flag-enable-prefix-caching",
+      "type": "engine-flag",
+      "engine": "vllm",
+      "flag": "--enable-prefix-caching",
+      "validValues": "boolean flag",
+      "source": { "doc": "vllm.ai docs" }
+    },
+    {
+      "id": "mlx-lm-flag-draft-model",
+      "type": "engine-flag",
+      "engine": "mlx-lm",
+      "flag": "--draft-model",
+      "validValues": "HuggingFace model ID, smaller model from same family as target",
+      "context": "Used with mlx_lm.server or mlx_lm.generate to enable speculative decoding",
+      "source": { "doc": "mlx-lm.cli", "verified": "2026-04-30 via context7" }
+    },
+    {
+      "id": "mlx-lm-flag-num-draft-tokens",
+      "type": "engine-flag",
+      "engine": "mlx-lm",
+      "flag": "--num-draft-tokens",
+      "validValues": "integer, typically 3-8",
+      "source": { "doc": "mlx-lm.cli", "verified": "2026-04-30 via context7" }
+    },
+    {
+      "id": "spec-decoding-not-ttft",
+      "type": "concept-rule",
+      "claim": "Speculative decoding improves TPS/ITL but NOT TTFT — it is a decode-phase optimization",
+      "source": { "book": "Cap. 5.2" }
+    },
+    {
+      "id": "decode-memory-bound",
+      "type": "concept-rule",
+      "claim": "LLM decode is memory-bandwidth-bound — model weights are loaded from HBM for every token generated",
+      "source": { "book": "Cap. 2.4.2" }
+    },
+    {
+      "id": "prefill-compute-bound",
+      "type": "concept-rule",
+      "claim": "LLM prefill is compute-bound — input sequence is processed in parallel, weights loaded once",
+      "source": { "book": "Cap. 2.4.2" }
+    },
+    {
+      "id": "image-gen-compute-bound",
+      "type": "concept-rule",
+      "claim": "Image and video generation are compute-bound (not memory-bandwidth-bound like LLM decode), because they iterate over latent space in parallel each denoising step",
+      "source": { "book": "Cap. 2.4.3, Cap. 6.5" }
+    },
+    {
+      "id": "kv-cache-linearizes-attention",
+      "type": "concept-rule",
+      "claim": "KV cache transforms attention from O(N²) to O(N) per token during decode by reusing previously computed keys and values",
+      "source": { "book": "Cap. 2.2.3" }
+    },
+    {
+      "id": "attention-arithmetic-intensity-decode",
+      "type": "calculation",
+      "claim": "Arithmetic intensity of attention during decode (N=4096, d=128, FP16) is ~62 ops/byte, far below H100 ops:byte 295 — confirming memory-bound",
+      "value": 62,
+      "unit": "ops/byte",
+      "source": { "book": "Cap. 2.4.2" }
+    },
+    {
+      "id": "few-step-image-gen-speedup",
+      "type": "concept-rule",
+      "claim": "Few-step image generation (8 steps vs 30-50) achieves 80-90% speedup with notable but acceptable quality drop",
+      "source": { "book": "Cap. 2.3.2" }
+    },
+    {
+      "id": "guidance-skip-trick",
+      "type": "concept-rule",
+      "claim": "In image generation, disabling classifier-free guidance for the last ~20 of 50 steps cuts forward passes from 100 to 80 with minimal quality loss — early steps establish outline, late steps refine details",
+      "source": { "book": "Cap. 6.5.2 (\"One Weird Trick\")" }
+    },
+    {
+      "id": "cold-start-4-factors",
+      "type": "concept-rule",
+      "claim": "Cold start for an inference replica is the sum of 4 additive factors: GPU procurement, container image loading, model weights loading, engine startup (compilation if applicable)",
+      "source": { "book": "Cap. 7.2.2" }
+    },
+    {
+      "id": "vllm-stars-vs-others",
+      "type": "comparison",
+      "claim": "vLLM has roughly 2x the GitHub stars of SGLang and TensorRT-LLM combined as of book publication (Jan 2026)",
+      "source": { "book": "Cap. 4.3.1" }
+    },
+    {
+      "id": "engine-tradeoff-table",
+      "type": "comparison",
+      "claim": "Inference engine tradeoff: vLLM has best model/hardware support, SGLang excels at MoE multi-node throughput, TensorRT-LLM has best peak performance but hardest learning curve",
+      "engines": ["vllm", "sglang", "tensorrt-llm"],
+      "source": { "book": "Cap. 4.3, p.106 table" }
+    },
+    {
+      "id": "tp-best-for-latency",
+      "type": "concept-rule",
+      "claim": "Tensor Parallelism is generally best for low-latency inference within a single node; Expert Parallelism better for throughput in MoE; Pipeline Parallelism only for multi-node scenarios",
+      "source": { "book": "Cap. 5.4" }
+    },
+    {
+      "id": "disaggregation-when-to-use",
+      "type": "concept-rule",
+      "claim": "Disaggregation (separating prefill and decode engines) is worth the complexity only with: high traffic (~100M-1B tokens/day), large model (>= 100B params), and prefill-heavy workload",
+      "source": { "book": "Cap. 5.5.2" }
+    },
+    {
+      "id": "fp8-not-2x-speedup",
+      "type": "concept-rule",
+      "claim": "Quantizing from FP16 to FP8 typically yields 30-50% performance improvement, NOT a clean 2x — overhead from scale factor handling consumes part of the theoretical 2x FLOPS",
+      "source": { "book": "Cap. 5.1" }
+    },
+    {
+      "id": "mxfp8-block-size",
+      "type": "concept-rule",
+      "claim": "MXFP8 microscaling format uses block size 32 — one scale factor per 32 parameters",
+      "blockSize": 32,
+      "source": { "book": "Cap. 5.1.1" }
+    },
+    {
+      "id": "nvfp4-block-size",
+      "type": "concept-rule",
+      "claim": "NVFP4 (NVIDIA proprietary 4-bit) uses block size 16 plus a secondary 32-bit global scale factor",
+      "blockSize": 16,
+      "source": { "book": "Cap. 5.1.1" }
+    },
+    {
+      "id": "kv-cache-storage-hierarchy",
+      "type": "concept-rule",
+      "claim": "KV cache storage hierarchy by bandwidth: G1 GPU VRAM (TB/s), G2 CPU RAM (10-100 GB/s), G3 local SSD (5-10 GB/s), G4 networked SSD (GB/s)",
+      "source": { "book": "Cap. 5.3.2" }
+    },
+    {
+      "id": "vlm-tokens-per-image",
+      "type": "concept-rule",
+      "claim": "A single high-resolution image adds approximately 1000 visual tokens to a VLM input sequence",
+      "value": 1000,
+      "unit": "visual tokens per HD image",
+      "source": { "book": "Cap. 6.1" }
+    },
+    {
+      "id": "video-tokens-rough",
+      "type": "concept-rule",
+      "claim": "A 4-second HD video clip at 24fps tokenizes to roughly 100k tokens — downsampling resolution and frame rate is practically mandatory for VLM video processing",
+      "source": { "book": "Cap. 6.1" }
+    },
+    {
+      "id": "whisper-rtf-target",
+      "type": "concept-rule",
+      "claim": "Optimized Whisper deployments achieve Real-Time Factor of ~1000X for long files (1 hour transcribed in <4 seconds), parallelized across MIGs or GPUs",
+      "source": { "book": "Cap. 6.3.2" }
+    },
+    {
+      "id": "tts-tps-ceiling",
+      "type": "concept-rule",
+      "claim": "TTS has a useful TPS ceiling of 80-100 tokens/sec — beyond that audio is generated faster than realtime, so optimizations should pivot to concurrent users not faster generation",
+      "source": { "book": "Cap. 6.4" }
+    },
+    {
+      "id": "video-attention-percent",
+      "type": "concept-rule",
+      "claim": "In video generation models, attention accounts for 70-80% of compute time, making it the primary optimization target",
+      "source": { "book": "Cap. 6.6.1" }
+    },
+    {
+      "id": "five-ms-per-timezone",
+      "type": "concept-rule",
+      "claim": "Network latency adds approximately 5ms per US timezone of distance between user and server — significant for tight SLA budgets",
+      "value": 5,
+      "unit": "ms per timezone",
+      "source": { "book": "Cap. 7.3.2" }
+    },
+    {
+      "id": "llama3-failure-rate",
+      "type": "concept-rule",
+      "claim": "From the Llama 3 paper: 16,000 H100 GPUs over 54 days experienced 419 unexpected interruptions — roughly 1 hardware failure per 50,000 GPU-hours",
+      "source": { "book": "Cap. 7.3.3" }
+    },
+    {
+      "id": "apple-silicon-no-cuda",
+      "type": "concept-rule",
+      "claim": "Apple Silicon (M-series) does NOT run CUDA — vLLM, SGLang, TensorRT-LLM are NVIDIA-only. Apple alternatives: MLX, MLX-LM, llama.cpp, Ollama",
+      "source": { "book": "Cap. 3.5.1, verified 2026-04-30" }
+    },
+    {
+      "id": "m3-ultra-spec",
+      "type": "hardware-spec",
+      "claim": "Apple M3 Ultra has 512 GB unified memory and 819 GB/s bandwidth (consumer prosumer tier)",
+      "memoryGB": 512,
+      "bandwidthGBs": 819,
+      "source": { "book": "Cap. 3.5.1" }
+    },
+    {
+      "id": "rtx-5090-spec",
+      "type": "hardware-spec",
+      "claim": "NVIDIA RTX 5090 has 32 GB VRAM and 1792 GB/s bandwidth (consumer top tier)",
+      "memoryGB": 32,
+      "bandwidthGBs": 1792,
+      "source": { "book": "Cap. 3.5.1" }
+    }
+  ]
+}
