@@ -70,23 +70,29 @@ export default function MentorPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col px-6 pt-32 pb-6">
       <header>
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          {t.eyebrow}
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-phosphor">
+          ▎ 03 / mentor
         </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">{t.title}</h1>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+        <h1 className="mt-3 text-5xl font-medium tracking-tight md:text-6xl">
+          {t.title}
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/75">
           {t.subtitle}
         </p>
-        <div className="mt-3 flex items-center gap-2">
-          <Badge variant="outline" className="font-mono text-[10px] uppercase">
-            claude-sonnet-4-6
-          </Badge>
-          <Badge variant="outline" className="font-mono text-[10px] uppercase">
-            facts.json v0.1
-          </Badge>
-          <Badge variant="outline" className="font-mono text-[10px] uppercase opacity-60">
-            RAG @ D2
-          </Badge>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="inline-flex items-center gap-2 border border-border/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest">
+            <span className="status-dot status-dot-live" />
+            anthropic/claude-sonnet-4.6
+          </span>
+          <span className="inline-flex items-center gap-2 border border-border/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest">
+            via Vercel AI Gateway
+          </span>
+          <span className="inline-flex items-center gap-2 border border-border/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest">
+            facts.json · 47 facts
+          </span>
+          <span className="inline-flex items-center gap-2 border border-border/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+            ○ RAG @ D2
+          </span>
         </div>
       </header>
 
