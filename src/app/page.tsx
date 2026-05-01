@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { LocaleToggle } from "@/components/locale-toggle"
 import { useLocale } from "@/components/locale-provider"
 
 const COPY = {
@@ -17,7 +16,6 @@ const COPY = {
       'Companion to "Inference Engineering" by Philip Kiely (Baseten Books, 2026, 259 p.).',
     cta: "open chapter 0",
     secondary: "see how it works",
-    nav: { livro: "Book", lab: "Lab", mentor: "Mentor" },
     sectionLabel: "// what's inside",
     sections: {
       livro: {
@@ -61,7 +59,6 @@ const COPY = {
       'Companion ao livro "Inference Engineering" do Philip Kiely (Baseten Books, 2026, 259 p.).',
     cta: "abrir capítulo 0",
     secondary: "como funciona",
-    nav: { livro: "Livro", lab: "Lab", mentor: "Mentor" },
     sectionLabel: "// o que tem dentro",
     sections: {
       livro: {
@@ -103,8 +100,6 @@ export default function HomePage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden">
-      <Header navCopy={t.nav} status={t.statusLive} />
-
       <section className="relative pt-36 pb-28">
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
@@ -256,44 +251,3 @@ export default function HomePage() {
   )
 }
 
-function Header({
-  navCopy,
-  status,
-}: {
-  navCopy: { livro: string; lab: string; mentor: string }
-  status: string
-}) {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-2xl">
-      <div className="mx-auto flex h-12 max-w-6xl items-center justify-between px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-3 font-mono text-xs font-semibold tracking-tight"
-        >
-          <span className="text-phosphor">▎</span>
-          <span>BTNE</span>
-          <span
-            className="hidden font-mono text-[10px] tracking-widest text-muted-foreground sm:inline"
-            aria-label={status}
-          >
-            <span className="status-dot status-dot-live mr-1.5 inline-block align-middle" />
-            v0.1
-          </span>
-        </Link>
-        <nav className="flex items-center gap-1">
-          {(["livro", "lab", "mentor"] as const).map((key) => (
-            <Link
-              key={key}
-              href={`/${key}`}
-              className="px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {navCopy[key]}
-            </Link>
-          ))}
-          <span className="ml-2 h-4 w-px bg-border" />
-          <LocaleToggle />
-        </nav>
-      </div>
-    </header>
-  )
-}

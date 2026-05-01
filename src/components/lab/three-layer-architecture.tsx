@@ -1,8 +1,9 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import { motion, AnimatePresence, type PanInfo } from "framer-motion"
 import { useLocale } from "@/components/locale-provider"
+import { shuffle } from "@/lib/utils"
 
 /**
  * Cap. 0 — interactive 3-layer architecture.
@@ -11,10 +12,6 @@ import { useLocale } from "@/components/locale-provider"
  * disappear into a toast; they pulse the chip red with an inline hint that
  * stays until next attempt. Correct drops lock in green AND reveal an
  * inline explanation of *why* the chip belongs there.
- *
- * The aim is not "win the puzzle" — it is to internalize the 3-layer mental
- * model the entire book leans on. Every chip carries a one-line teaching
- * moment, accumulated as the user solves.
  */
 
 type Layer = "runtime" | "infra" | "tooling"
@@ -192,49 +189,55 @@ export function ThreeLayerArchitecture() {
     infra: useRef<HTMLDivElement>(null),
     tooling: useRef<HTMLDivElement>(null),
   }
+  // Lazy initializer — runs once on mount, no useEffect needed.
+  const [shuffled, setShuffled] = useState<Chip[]>(() => shuffle(CHIPS))
   const [placed, setPlaced] = useState<Record<string, Layer | null>>({})
-  const [shuffled, setShuffled] = useState<Chip[]>([])
   const [hoverLayer, setHoverLayer] = useState<Layer | null>(null)
   const [wrongAttempts, setWrongAttempts] = useState<Record<string, number>>({})
   const [showHint, setShowHint] = useState<string | null>(null)
-
-  useEffect(() => {
-    setShuffled([...CHIPS].sort(() => Math.random() - 0.5))
-  }, [])
 
   const placedCount = Object.values(placed).filter(Boolean).length
   const allCorrect =
     CHIPS.every((c) => placed[c.id] === c.layer) &&
     Object.keys(placed).length === CHIPS.length
 
-  const layerForPoint = (x: number, y: number): Layer | null => {
+  /**
+   * Hit-test using a chip-center point rather than the cursor position.
+   * Cursor-based detection is wrong when the user grabs a chip by its corner
+   * — the cursor can sit outside the chip while the chip itself is visually
+   * on top of a layer. The chip's `currentTarget` rect is the truth.
+   */
+  const layerForRect = (rect: DOMRect): Layer | null => {
+    const cx = rect.left + rect.width / 2
+    const cy = rect.top + rect.height / 2
     for (const layer of ["runtime", "infra", "tooling"] as Layer[]) {
       const el = layerRefs[layer].current
       if (!el) continue
-      const rect = el.getBoundingClientRect()
-      if (
-        x >= rect.left &&
-        x <= rect.right &&
-        y >= rect.top &&
-        y <= rect.bottom
-      ) {
+      const r = el.getBoundingClientRect()
+      if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) {
         return layer
       }
     }
     return null
   }
 
-  const handleDrag = (info: PanInfo) => {
-    const target = layerForPoint(info.point.x, info.point.y)
-    setHoverLayer(target)
+  const handleDrag = (e: PointerEvent | MouseEvent | TouchEvent) => {
+    const target = e.target as HTMLElement | null
+    if (!target) return
+    setHoverLayer(layerForRect(target.getBoundingClientRect()))
   }
 
-  const handleDragEnd = (chip: Chip, info: PanInfo) => {
+  const handleDragEnd = (
+    chip: Chip,
+    e: PointerEvent | MouseEvent | TouchEvent,
+  ) => {
     setHoverLayer(null)
-    const target = layerForPoint(info.point.x, info.point.y)
-    if (target === null) return
-    if (target === chip.layer) {
-      setPlaced((p) => ({ ...p, [chip.id]: target }))
+    const target = e.target as HTMLElement | null
+    if (!target) return
+    const dropLayer = layerForRect(target.getBoundingClientRect())
+    if (dropLayer === null) return
+    if (dropLayer === chip.layer) {
+      setPlaced((p) => ({ ...p, [chip.id]: dropLayer }))
       setShowHint(null)
     } else {
       setWrongAttempts((w) => ({ ...w, [chip.id]: (w[chip.id] ?? 0) + 1 }))
@@ -246,7 +249,7 @@ export function ThreeLayerArchitecture() {
     setPlaced({})
     setWrongAttempts({})
     setShowHint(null)
-    setShuffled([...CHIPS].sort(() => Math.random() - 0.5))
+    setShuffled(shuffle(CHIPS))
   }
 
   return (
@@ -307,7 +310,12 @@ export function ThreeLayerArchitecture() {
                 <div className="flex min-h-[44px] flex-wrap items-start gap-2">
                   <AnimatePresence>
                     {placedChips.map((chip) => (
-                      <PlacedChip key={chip.id} chip={chip} locale={locale} accent={info.accent} />
+                      <PlacedChip
+                        key={chip.id}
+                        chip={chip}
+                        locale={locale}
+                        accent={info.accent}
+                      />
                     ))}
                   </AnimatePresence>
                   {placedChips.length === 0 && (
@@ -333,7 +341,7 @@ export function ThreeLayerArchitecture() {
           >
             <p className="font-mono text-[11px] uppercase tracking-widest text-destructive">
               {locale === "en" ? "wrong layer" : "camada errada"} ·{" "}
-              {wrongAttempts[showHint] ?? 1}{locale === "en" ? "x" : "x"}
+              {wrongAttempts[showHint] ?? 1}x
             </p>
             <p className="mt-1 text-sm">
               {CHIPS.find((c) => c.id === showHint)?.hint[locale]}
@@ -354,8 +362,8 @@ export function ThreeLayerArchitecture() {
               <ChipDraggable
                 key={chip.id}
                 chip={chip}
-                onDrag={(_, info) => handleDrag(info)}
-                onDragEnd={(_, info) => handleDragEnd(chip, info)}
+                onDrag={handleDrag}
+                onDragEnd={(e) => handleDragEnd(chip, e)}
                 isErrored={showHint === chip.id}
               />
             ))}
@@ -401,7 +409,7 @@ function ProgressBar({ value, total }: { value: number; total: number }) {
     <div className="flex items-center gap-2">
       <div className="h-1 w-32 bg-border">
         <motion.div
-          className="h-full bg-phosphor"
+          className="h-full"
           style={{ backgroundColor: "var(--color-phosphor)" }}
           initial={false}
           animate={{ width: `${pct}%` }}
@@ -439,7 +447,6 @@ function PlacedChip({
         style={{
           border: `1px solid ${accent}`,
           color: accent,
-          backgroundColor: "color-mix(in oklch, var(--background), transparent 0%)",
         }}
       >
         <span>✓</span>
@@ -448,15 +455,13 @@ function PlacedChip({
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="max-w-[42ch] text-foreground/80 normal-case"
+            className="max-w-[42ch] normal-case"
             style={{ color: "var(--foreground)" }}
           >
             — {chip.why[locale]}
           </motion.span>
         )}
-        {!expanded && (
-          <span className="text-muted-foreground/60">·</span>
-        )}
+        {!expanded && <span className="text-muted-foreground/60">·</span>}
       </div>
     </motion.div>
   )
@@ -469,8 +474,8 @@ function ChipDraggable({
   isErrored,
 }: {
   chip: Chip
-  onDrag: (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void
-  onDragEnd: (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void
+  onDrag: (e: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) => void
+  onDragEnd: (e: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) => void
   isErrored: boolean
 }) {
   return (

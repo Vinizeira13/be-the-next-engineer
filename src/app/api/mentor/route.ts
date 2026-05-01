@@ -1,12 +1,16 @@
 import { convertToModelMessages, streamText, type UIMessage } from "ai"
 import { factsForPrompt, FACTS_SOURCE } from "@/lib/facts"
+import { checkRateLimit, getClientKey } from "@/lib/rate-limit"
 
 export const maxDuration = 60
 
 const FACTS_BLOCK = factsForPrompt()
 
-// System prompt is intentionally long but stable — qualifies for prompt caching
-// in the Anthropic provider (cached after first hit).
+// Cap conversation history sent to the model. Each user/assistant pair counts
+// as 2 messages. 20 messages ≈ 10 exchanges. Beyond that we drop the oldest —
+// chat threads can grow indefinitely with useChat and the cost grows with them.
+const MAX_HISTORY_MESSAGES = 20
+
 const SYSTEM_PROMPT = `You are the **AI Mentor** for "Be the Next Engineer", a 5-day intensive bootcamp for becoming an inference engineer. You are reading along with the student through Philip Kiely's book "${FACTS_SOURCE}".
 
 # Your role
@@ -57,6 +61,28 @@ ${FACTS_BLOCK}
 - Cite chapter (e.g. "Cap. 5.3.1") when relevant.`
 
 export async function POST(req: Request) {
+  // Rate limit BEFORE auth check — cheap reject for floods.
+  const clientKey = getClientKey(req)
+  const rl = checkRateLimit(clientKey)
+  if (!rl.ok) {
+    return new Response(
+      JSON.stringify({
+        error: "rate_limit_exceeded",
+        retryAfter: rl.retryAfter,
+      }),
+      {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          "Retry-After": String(rl.retryAfter ?? 60),
+          "X-RateLimit-Limit": "30",
+          "X-RateLimit-Remaining": "0",
+          "X-RateLimit-Reset": String(Math.floor(rl.resetAt / 1000)),
+        },
+      },
+    )
+  }
+
   const hasGatewayAuth =
     !!process.env.AI_GATEWAY_API_KEY || !!process.env.VERCEL_OIDC_TOKEN
 
@@ -72,13 +98,24 @@ export async function POST(req: Request) {
 
   const { messages }: { messages: UIMessage[] } = await req.json()
 
-  // Plain "provider/model" string routes through Vercel AI Gateway automatically.
-  // Note: Gateway slugs use dots for versions (sonnet-4.6), not hyphens.
+  // Truncate history. Drop oldest messages but always preserve the most
+  // recent user message at the tail. (useChat sends the full thread on every
+  // request; without this, cost grows linearly with conversation length.)
+  const truncated =
+    messages.length > MAX_HISTORY_MESSAGES
+      ? messages.slice(-MAX_HISTORY_MESSAGES)
+      : messages
+
+  // Plain "provider/model" string routes through Vercel AI Gateway.
+  // Gateway slugs use dots (sonnet-4.6), not hyphens.
   const result = streamText({
     model: "anthropic/claude-sonnet-4.6",
     system: SYSTEM_PROMPT,
-    messages: await convertToModelMessages(messages),
-    temperature: 0.4,
+    messages: await convertToModelMessages(truncated),
+    // Low temperature — this is a fact-anchored tutor, not a creative writer.
+    // Higher values invite paraphrasing of facts that drift.
+    temperature: 0.15,
+    abortSignal: req.signal,
     providerOptions: {
       gateway: {
         tags: ["feature:mentor", "env:dev"],
@@ -86,5 +123,11 @@ export async function POST(req: Request) {
     },
   })
 
-  return result.toUIMessageStreamResponse()
+  return result.toUIMessageStreamResponse({
+    headers: {
+      "X-RateLimit-Limit": "30",
+      "X-RateLimit-Remaining": String(rl.remaining),
+      "X-RateLimit-Reset": String(Math.floor(rl.resetAt / 1000)),
+    },
+  })
 }

@@ -1,7 +1,10 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-import { LocaleProvider } from "@/components/locale-provider"
+import { cookies } from "next/headers"
+import { LocaleProvider, LOCALE_COOKIE_NAME } from "@/components/locale-provider"
+import { SiteHeader } from "@/components/site-header"
 import { Toaster } from "@/components/ui/sonner"
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -26,19 +29,25 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const cookieValue = cookieStore.get(LOCALE_COOKIE_NAME)?.value
+  const initialLocale: Locale =
+    cookieValue === "en" || cookieValue === "pt" ? cookieValue : DEFAULT_LOCALE
+
   return (
     <html
-      lang="en"
+      lang={initialLocale === "pt" ? "pt-BR" : "en"}
       className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background text-foreground font-sans">
-        <LocaleProvider>
+        <LocaleProvider initialLocale={initialLocale}>
+          <SiteHeader />
           {children}
           <Toaster />
         </LocaleProvider>
