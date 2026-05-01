@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.73",
     "@ai-sdk/react": "^3.0.174",
     "@base-ui/react": "^1.4.1",
     "@types/d3": "^7.4.3",

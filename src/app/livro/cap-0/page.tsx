@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useLocale } from "@/components/locale-provider"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { ThreeLayerArchitecture } from "@/components/lab/three-layer-architecture"
 
 export default function Cap0Page() {
   const { locale } = useLocale()
@@ -49,23 +50,17 @@ function ContentEN() {
 
       <p>
         Kiely opens by drawing a three-layer architecture you should keep in your head from now until
-        the last page:
+        the last page. Don&apos;t just read it — drag the pieces yourself:
       </p>
 
-      <ul>
-        <li>
-          <strong>Runtime</strong> — making one model fast on one instance: kernels, engines (vLLM,
-          SGLang, TensorRT-LLM), batching, KV cache. Cap. 2–6 live here.
-        </li>
-        <li>
-          <strong>Infrastructure</strong> — scaling across clusters, regions, clouds without melting
-          uptime. Cap. 7 lives here.
-        </li>
-        <li>
-          <strong>Tooling</strong> — the right abstraction for the team: enough control where it
-          matters, enough productivity where it doesn&apos;t.
-        </li>
-      </ul>
+      <ThreeLayerArchitecture />
+
+      <p className="text-sm text-muted-foreground">
+        That mapping is not arbitrary. <strong>Runtime</strong> is single-instance optimization
+        (Caps. 2–6 live here). <strong>Infrastructure</strong> is everything that emerges when one
+        instance is not enough (Cap. 7). <strong>Tooling</strong> is the abstraction layer
+        engineers actually touch.
+      </p>
 
       <h2>Why now</h2>
 
@@ -108,8 +103,8 @@ function ContentEN() {
       </ol>
 
       <p className="mt-8 text-sm text-muted-foreground">
-        Open the AI Mentor (top-right) to ask anything about this chapter. It cites pages and won&apos;t
-        bullshit you.
+        Open the <Link href="/mentor" className="underline underline-offset-4">AI Mentor</Link> to
+        ask anything about this chapter. It cites chapters and won&apos;t bullshit you.
       </p>
     </article>
   )
@@ -129,23 +124,17 @@ function ContentPT() {
 
       <p>
         Kiely abre desenhando uma arquitetura de três camadas que você deveria manter na cabeça daqui
-        até a última página:
+        até a última página. Não só leia — arrasta as peças você mesmo:
       </p>
 
-      <ul>
-        <li>
-          <strong>Runtime</strong> — fazer um modelo rodar rápido em uma instância: kernels, engines
-          (vLLM, SGLang, TensorRT-LLM), batching, KV cache. Caps. 2–6 vivem aqui.
-        </li>
-        <li>
-          <strong>Infrastructure</strong> — escalar entre clusters, regiões, clouds sem derreter
-          uptime. Cap. 7 vive aqui.
-        </li>
-        <li>
-          <strong>Tooling</strong> — a abstração certa para o time: controle onde importa,
-          produtividade onde não importa.
-        </li>
-      </ul>
+      <ThreeLayerArchitecture />
+
+      <p className="text-sm text-muted-foreground">
+        Esse mapeamento não é arbitrário. <strong>Runtime</strong> é otimização single-instance
+        (Caps. 2–6 vivem aqui). <strong>Infrastructure</strong> é tudo que emerge quando uma
+        instância não basta (Cap. 7). <strong>Tooling</strong> é a camada de abstração que engineers
+        de fato tocam.
+      </p>
 
       <h2>Por que agora</h2>
 
@@ -188,8 +177,8 @@ function ContentPT() {
       </ol>
 
       <p className="mt-8 text-sm text-muted-foreground">
-        Abre o AI Mentor (canto superior direito) pra perguntar qualquer coisa sobre esse capítulo. Ele
-        cita páginas e não inventa.
+        Abre o <Link href="/mentor" className="underline underline-offset-4">AI Mentor</Link> pra
+        perguntar qualquer coisa sobre esse capítulo. Ele cita capítulos e não inventa.
       </p>
     </article>
   )

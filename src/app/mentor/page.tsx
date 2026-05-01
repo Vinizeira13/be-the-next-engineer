@@ -23,7 +23,8 @@ const COPY = {
     empty: "Empty thread. Try: \"Why is decode memory-bound?\" or \"Compare vLLM and SGLang.\"",
     you: "You",
     mentor: "Mentor",
-    error: "Something went wrong. Did you set ANTHROPIC_API_KEY in .env.local?",
+    error:
+      "AI Gateway not authenticated. Run `vercel link && vercel env pull .env.local`, or set AI_GATEWAY_API_KEY in .env.local.",
   },
   pt: {
     eyebrow: "03 / Mentor",
@@ -37,7 +38,7 @@ const COPY = {
     empty: "Thread vazio. Tenta: \"Por que decode é memory-bound?\" ou \"Compara vLLM e SGLang.\"",
     you: "Você",
     mentor: "Mentor",
-    error: "Algo deu errado. Você definiu ANTHROPIC_API_KEY no .env.local?",
+    error: "AI Gateway não autenticado. Roda `vercel link && vercel env pull .env.local`, ou seta AI_GATEWAY_API_KEY no .env.local.",
   },
 } as const
 
